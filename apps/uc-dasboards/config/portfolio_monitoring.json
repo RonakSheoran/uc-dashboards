@@ -1,0 +1,43 @@
+{
+  "title": "Portfolio Monitoring",
+  "detail_row_limit": 250,
+  "common_filters": [
+    ["check_month", "Month"], ["zone", "Zone"], ["state", "State"],
+    ["anchor_tag", "Anchor Tag"], ["anchor_name", "Anchor"],
+    ["write_off_flag", "Write-off Flag"], ["roi_bucket", "ROI Bucket"],
+    ["category", "Category"], ["loan_product", "Loan Product"],
+    ["limit_bucket", "Ticket Size"], ["uw_spoc", "UW SPOC"],
+    ["lender_name", "Lender"],
+    ["onboarding_bureau_score_bucket", "Onboarding Bureau"],
+    ["incorporation_type", "Borrower Constitution"]
+  ],
+  "dimension_pages": {
+    "product": ["Product Tag", "Product wise"],
+    "category": ["category", "Category wise"],
+    "state": ["state", "State wise"],
+    "zone": ["zone", "Zone wise"],
+    "anchor": ["anchor_name", "Onboarding Anchor wise"],
+    "roi": ["roi_bucket", "ROI Bucket wise"],
+    "uw-spoc": ["uw_spoc", "UW SPOC wise"],
+    "ticket-size": ["limit_bucket", "Ticket size wise"],
+    "bureau": ["onboarding_bureau_score_bucket", "Onboarding bureau wise"],
+    "constitution": ["incorporation_type", "Borrower constitution wise"],
+    "no-nach": ["status", "Cases with no NACH"]
+  },
+  "monthly_metrics": [
+    ["Total_aum_in_cr", "AUM (Cr)", null],
+    ["par_0_plus_cr", "0+ PAR (Cr)", null],
+    ["par_0_plus_cr", "0+ PAR %", "Total_aum_in_cr"],
+    ["par_30_plus_cr", "30+ PAR (Cr)", null],
+    ["par_30_plus_cr", "30+ PAR %", "Total_aum_in_cr"],
+    ["par_60_plus_cr", "60+ PAR (Cr)", null],
+    ["par_60_plus_cr", "60+ PAR %", "Total_aum_in_cr"],
+    ["par_90_plus_cr", "90+ PAR (Cr)", null],
+    ["par_90_plus_cr", "90+ PAR %", "Total_aum_in_cr"]
+  ],
+  "overall_dimensions": [
+    ["Product Tag", "Product"], ["state", "State"], ["zone", "Zone"],
+    ["lender_name", "Lender"], ["category", "Category"],
+    ["anchor_name", "Anchor"], ["limit_bucket", "Ticket size"]
+  ]
+}

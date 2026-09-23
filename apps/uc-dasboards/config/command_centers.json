@@ -1,0 +1,30 @@
+{
+  "cache_seconds": 900,
+  "days": 7,
+  "invoice_command": {
+    "title": "300s Command Center",
+    "noun": "Invoices",
+    "headline_label": "Invoices Disbursed Under 5 Minutes",
+    "total_column": "Total Invoices",
+    "rate_column": "% Disbursed <5 Min",
+    "eligible_widget_label": "% Invoices Eligible",
+    "balance_widget_label": "% Invoices Balance",
+    "waterfall_title": "300s Eligibility Waterfall - Day-over-Day",
+    "net_column": "Net Eligible (300s)",
+    "table": "hive_metastore.probes.tat_fix_gnhgks",
+    "id_column": "id",
+    "date_column": "latest_invoice_timestamp",
+    "updated_column": "refresh_time",
+    "tat_column": "invoice_tat",
+    "tat_unit": "seconds",
+    "threshold_value": 300,
+    "target_percent": 90,
+    "overall_column": "invoice_tat",
+    "overall_unit": "seconds",
+    "exclusions": [
+      {"label": "MFL Lines", "column": "lender", "op": "eq", "value": "MFL"},
+      {"label": "Risky Cust. (Manual)", "column": "risky_customer", "op": "eq", "value": 1},
+      {"label": "5L+ Invoices", "column": "invoice_amount_tag", "op": "eq", "value": "5L+"}
+    ]
+  }
+}

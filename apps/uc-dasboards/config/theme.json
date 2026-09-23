@@ -1,0 +1,45 @@
+{
+  "colors": {
+    "primary": "#DC3545",
+    "primary_dark": "#B81010",
+    "secondary": "#4472C4",
+    "background": "#F0F0F3",
+    "page_background": "#F8FAFC",
+    "surface": "#FFFFFF",
+    "text": "#111111",
+    "muted": "#555555",
+    "border": "#E5E7EB",
+    "grid": "#F0F0F0",
+    "positive": "#16A34A",
+    "negative": "#DC2626"
+  },
+  "typography": {
+    "family": "DM Sans, -apple-system, BlinkMacSystemFont, sans-serif",
+    "title_size": 26,
+    "body_size": 12
+  },
+  "spacing": {
+    "page_x": 28,
+    "page_y": 20,
+    "gap": 12
+  },
+  "cards": {
+    "radius": 12,
+    "shadow": "0 4px 14px rgba(0,0,0,0.08), 0 8px 30px rgba(0,0,0,0.04)"
+  },
+  "charts": {
+    "height": 320,
+    "line_width": 2.5,
+    "series": ["#DC3545", "#8B5CF6", "#F59E0B", "#06B6D4", "#64748B", "#94A3B8"]
+  },
+  "tables": {
+    "page_size": 15,
+    "max_height": 400,
+    "density": "compact",
+    "striped": true
+  },
+  "buttons": {
+    "radius": 6,
+    "font_size": 11
+  }
+}
