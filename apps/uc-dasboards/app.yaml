@@ -1,0 +1,15 @@
+command:
+  - python
+  - run.py
+
+env:
+  - name: DATABRICKS_WAREHOUSE_ID
+    valueFrom: sql-warehouse
+  - name: OPS_SCHEMA
+    value: "hive_metastore.probes"
+  - name: LT_SALES_SCHEMA
+    value: "hive_metastore.probes"
+  - name: PORTFOLIO_SCHEMA
+    value: "hive_metastore.probes"
+  - name: DASHBOARD_EVENTS_TABLE
+    value: "hive_metastore.credit.uc_dashboard_app_events"

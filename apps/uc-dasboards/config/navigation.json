@@ -1,0 +1,362 @@
+{
+  "dashboards": [
+    {
+      "id": "live",
+      "label": "UC Live Status",
+      "icon": "live.svg",
+      "module": "uc_live",
+      "serial": 1,
+      "order": 10
+    },
+    {
+      "id": "aum",
+      "label": "AUM Dashboard",
+      "icon": "aum.svg",
+      "module": "aum_dashboard",
+      "serial": 2,
+      "order": 20
+    },
+    {
+      "id": "relationship",
+      "label": "Relationship Tracker",
+      "icon": "relationship-crm.png",
+      "module": "relationship",
+      "serial": 3,
+      "order": 30
+    },
+    {
+      "id": "operations",
+      "label": "Operational Metrics",
+      "icon": "operations.svg",
+      "module": "operational_metrics",
+      "serial": 4,
+      "order": 40
+    },
+    {
+      "id": "lt_sales",
+      "label": "LT Sales LMS",
+      "icon": "lt_sales.svg",
+      "module": "lt_sales",
+      "serial": 5,
+      "order": 50
+    },
+    {
+      "id": "portfolio",
+      "label": "Portfolio Monitoring",
+      "icon": "portfolio.svg",
+      "module": "portfolio_monitoring",
+      "serial": 6,
+      "order": 60
+    },
+    {
+      "id": "invoice_command",
+      "label": "300s Command Center",
+      "icon": "invoice_command.svg",
+      "module": "invoice_command",
+      "serial": 7,
+      "order": 70
+    }
+  ],
+  "subpages": {
+    "aum": [
+      {
+        "id": "uc-aum-npa",
+        "label": "uC (AUM & NPA)",
+        "serial": 1,
+        "order": 10
+      },
+      {
+        "id": "uc-0par",
+        "label": "uC (0+PAR)",
+        "serial": 2,
+        "order": 20
+      },
+      {
+        "id": "uc-30-60",
+        "label": "uC (30+ & 60+ PAR)",
+        "serial": 3,
+        "order": 30
+      },
+      {
+        "id": "daily-trend",
+        "label": "Daily Trend (0+ to 90+)",
+        "serial": 4,
+        "order": 40
+      },
+      {
+        "id": "daily-par-val",
+        "label": "Daily Trend (PAR values)",
+        "serial": 5,
+        "order": 50
+      },
+      {
+        "id": "daily-par-cnt",
+        "label": "Daily Trend (PAR count)",
+        "serial": 6,
+        "order": 60
+      },
+      {
+        "id": "anchor-aum",
+        "label": "Anchor (AUM & NPA)",
+        "serial": 7,
+        "order": 70
+      },
+      {
+        "id": "anchor-lines",
+        "label": "Anchor (lines_count)",
+        "serial": 8,
+        "order": 80
+      },
+      {
+        "id": "anchor-30-60",
+        "label": "Anchor (30+ & 60+)",
+        "serial": 9,
+        "order": 90
+      },
+      {
+        "id": "anchor-disb",
+        "label": "Anchor (Disbursals & #lines)",
+        "serial": 10,
+        "order": 100
+      },
+      {
+        "id": "brand-anchor",
+        "label": "Brand Anchors (AUM & NPA)",
+        "serial": 11,
+        "order": 110
+      },
+      {
+        "id": "l30-anchor",
+        "label": "L30 Day Anchor AUM",
+        "serial": 12,
+        "order": 120
+      },
+      {
+        "id": "pratishtha",
+        "label": "Pratishtha DPD View",
+        "serial": 13,
+        "order": 130
+      },
+      {
+        "id": "intercompany",
+        "label": "Intercompany",
+        "serial": 14,
+        "order": 140
+      },
+      {
+        "id": "dpd-data",
+        "label": "Max Exact DPD Data",
+        "serial": 15,
+        "order": 150
+      },
+      {
+        "id": "uc-internal",
+        "label": "uC AUM & NPA (Internal)",
+        "serial": 16,
+        "order": 160
+      }
+    ],
+    "relationship": [
+      {
+        "id": "sales",
+        "label": "MoM Sales POC",
+        "serial": 1,
+        "order": 10
+      },
+      {
+        "id": "rsm",
+        "label": "MoM RSM",
+        "serial": 2,
+        "order": 20
+      },
+      {
+        "id": "raw",
+        "label": "Raw Data",
+        "serial": 3,
+        "order": 30
+      },
+      {
+        "id": "visits",
+        "label": "Visits",
+        "serial": 4,
+        "order": 40
+      }
+    ],
+    "operations": [
+      {
+        "id": "onboarding",
+        "label": "Onboarding (MOM view)",
+        "serial": 1,
+        "order": 10
+      },
+      {
+        "id": "flow",
+        "label": "Funnel / Flow summary",
+        "serial": 2,
+        "order": 20
+      },
+      {
+        "id": "anchor",
+        "label": "Anchor performance",
+        "serial": 3,
+        "order": 30
+      },
+      {
+        "id": "state",
+        "label": "Anchor current state",
+        "serial": 4,
+        "order": 40
+      },
+      {
+        "id": "leadbd",
+        "label": "Lead_BD performance",
+        "serial": 5,
+        "order": 50
+      },
+      {
+        "id": "rejection",
+        "label": "Rejection cause",
+        "serial": 6,
+        "order": 60
+      }
+    ],
+    "lt_sales": [
+      {
+        "id": "lead-interaction",
+        "label": "Lead Interaction Summary",
+        "serial": 1,
+        "order": 10
+      },
+      {
+        "id": "anchor-summary",
+        "label": "Anchor Level Summary",
+        "serial": 2,
+        "order": 20
+      },
+      {
+        "id": "daily-performance",
+        "label": "Daily Performance",
+        "serial": 3,
+        "order": 30
+      }
+    ],
+    "portfolio": [
+      {
+        "id": "master-aum",
+        "label": "Master AUM Summary",
+        "serial": 1,
+        "order": 10
+      },
+      {
+        "id": "overall-aum",
+        "label": "Overall AUM Summary",
+        "serial": 2,
+        "order": 20
+      },
+      {
+        "id": "product",
+        "label": "Product",
+        "serial": 3,
+        "order": 30
+      },
+      {
+        "id": "category",
+        "label": "Category",
+        "serial": 4,
+        "order": 40
+      },
+      {
+        "id": "state",
+        "label": "State",
+        "serial": 5,
+        "order": 50
+      },
+      {
+        "id": "zone",
+        "label": "Zone",
+        "serial": 6,
+        "order": 60
+      },
+      {
+        "id": "anchor",
+        "label": "Onboarding Anchor",
+        "serial": 7,
+        "order": 70
+      },
+      {
+        "id": "roi",
+        "label": "ROI Bucket",
+        "serial": 8,
+        "order": 80
+      },
+      {
+        "id": "uw-spoc",
+        "label": "UW SPOC",
+        "serial": 9,
+        "order": 90
+      },
+      {
+        "id": "ticket-size",
+        "label": "Ticket Size",
+        "serial": 10,
+        "order": 100
+      },
+      {
+        "id": "bureau",
+        "label": "Onboarding Bureau",
+        "serial": 11,
+        "order": 110
+      },
+      {
+        "id": "constitution",
+        "label": "Borrower Constitution",
+        "serial": 12,
+        "order": 120
+      },
+      {
+        "id": "no-nach",
+        "label": "Cases with no NACH",
+        "serial": 13,
+        "order": 130
+      },
+      {
+        "id": "overall-lines",
+        "label": "Overall Lines Summary",
+        "serial": 14,
+        "order": 140
+      },
+      {
+        "id": "ns-em",
+        "label": "Non Starter & Early Mortality",
+        "serial": 15,
+        "order": 150
+      },
+      {
+        "id": "possible-ns",
+        "label": "Possible Non Starter Cases",
+        "serial": 16,
+        "order": 160
+      },
+      {
+        "id": "cb-enhancement",
+        "label": "CB+ Enhancement",
+        "serial": 17,
+        "order": 170
+      }
+    ],
+    "invoice_command": [
+      {
+        "id": "snapshot",
+        "label": "Eligibility Snapshot",
+        "serial": 1,
+        "order": 10
+      },
+      {
+        "id": "waterfall",
+        "label": "Waterfall Funnel",
+        "serial": 2,
+        "order": 20
+      }
+    ]
+  }
+}

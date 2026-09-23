@@ -1,0 +1,18 @@
+{
+  "columns": {
+    "current_lead_state_n": [
+      "Not-picked",
+      "Reattempt",
+      "Requesting-anchor-callback",
+      "Under-discussion",
+      "NOT_INTERESTED",
+      "NOT_ELIGIBLE",
+      "Duplicate-lead",
+      "Invalid-number",
+      "APPLICATION_PROCESSING",
+      "APPLICATION_REJECTED",
+      "APPLICATION_CANCELLED",
+      "LINE_ACTIVATED"
+    ]
+  }
+}

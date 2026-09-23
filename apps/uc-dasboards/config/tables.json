@@ -1,0 +1,152 @@
+{
+  "tables": {
+    "7udbqb": {
+      "schema": "hive_metastore.probes",
+      "table": "live_dashboard_disb_trendline_7udbqb"
+    },
+    "di6x4p": {
+      "schema": "hive_metastore.probes",
+      "table": "prat_exact_dpd_di6x4p"
+    },
+    "dv2jpb": {
+      "schema": "hive_metastore.probes",
+      "table": "p_st_aum_dv2jpb"
+    },
+    "dzezet": {
+      "schema": "hive_metastore.probes",
+      "table": "book_size_updates_dzezet"
+    },
+    "euwwlz": {
+      "schema": "hive_metastore.probes",
+      "table": "sales_flow_summary_euwwlz"
+    },
+    "f6m2q6": {
+      "schema": "hive_metastore.probes",
+      "table": "anchor_poc_visits_pbi_f6m2q6"
+    },
+    "f73jfw": {
+      "schema": "hive_metastore.probes",
+      "table": "intercompany_booksize_f73jfw"
+    },
+    "fbtkmw": {
+      "schema": "hive_metastore.probes",
+      "table": "lt_collection_check_month_fbtkmw"
+    },
+    "fsep66": {
+      "schema": "hive_metastore.probes",
+      "table": "sales_funnel_summary_fsep66"
+    },
+    "fvx6ys": {
+      "schema": "hive_metastore.probes",
+      "table": "app_stock_uc_fvx6ys"
+    },
+    "fvvs4w": {
+      "schema": "hive_metastore.probes",
+      "table": "lead_details_ref_fvvs4w"
+    },
+    "fyy6q3": {
+      "schema": "hive_metastore.probes",
+      "table": "dailyaum_fyy6q3"
+    },
+    "gfngvh": {
+      "schema": "hive_metastore.probes",
+      "table": "aum_graph_gfngvh"
+    },
+    "gjizpf": {
+      "schema": "hive_metastore.probes",
+      "table": "live_dashboard_aum_gjizpf"
+    },
+    "gpnbka": {
+      "schema": "hive_metastore.probes",
+      "table": "rm_tracking_gpnbka"
+    },
+    "gppgs3": {
+      "schema": "hive_metastore.probes",
+      "table": "ops_metrics_lead_details_gppgs3"
+    },
+    "gwziy4": {
+      "schema": "hive_metastore.probes",
+      "table": "aum_0_30_plus_gwziy4"
+    },
+    "gxbrta": {
+      "schema": "hive_metastore.probes",
+      "table": "live_dashboard_new_actvations_gxbrta"
+    },
+    "h2srrf": {
+      "schema": "hive_metastore.probes",
+      "table": "visits_pbi_h2srrf"
+    },
+    "hmnkwl": {
+      "schema": "hive_metastore.probes",
+      "table": "cross_visits_hmnkwl"
+    },
+    "hgxh5i": {
+      "schema": "hive_metastore.probes",
+      "table": "all_officers_crm_hgxh5i"
+    },
+    "ilvfwm": {
+      "schema": "hive_metastore.probes",
+      "table": "app_attendance_ilvfwm"
+    },
+    "ifvotb": {
+      "schema": "hive_metastore.probes",
+      "table": "calling_data_agg_ifvotb"
+    },
+    "ipyaib": {
+      "schema": "hive_metastore.probes",
+      "table": "lead_stock_uc_ipyaib"
+    },
+    "kh32o2": {
+      "schema": "hive_metastore.probes",
+      "table": "rejection_tracking_kh32o2"
+    },
+    "lcwxtn": {
+      "schema": "hive_metastore.probes",
+      "table": "live_dashboard_hcpl_lcwxtn"
+    },
+    "nonzwp": {
+      "schema": "hive_metastore.probes",
+      "table": "bridge_table_leadbd_nonzwp"
+    },
+    "oatmop": {
+      "schema": "hive_metastore.probes",
+      "table": "bridge_table_slicers_oatmop"
+    },
+    "wmbygc": {
+      "schema": "hive_metastore.probes",
+      "table": "daily_sales_funnel_wmbygc"
+    },
+    "xo5ozz": {
+      "schema": "hive_metastore.probes",
+      "table": "followup_breach_report_xo5ozz"
+    },
+    "otxlat": {
+      "schema": "hive_metastore.probes",
+      "table": "book_size_updates_dupe_otxlat"
+    },
+    "pfo47z": {
+      "schema": "hive_metastore.probes",
+      "table": "ops_metrics_activation_dashboard_pfo47z"
+    },
+    "i4dzcz": {
+      "schema": "hive_metastore.probes",
+      "table": "portfolio_monitoring_i4dzcz"
+    },
+    "wtyaum": {
+      "schema": "hive_metastore.probes",
+      "table": "limit_enhancement_analysis_wtyaum"
+    },
+    "f7cbqv": {
+      "schema": "hive_metastore.probes",
+      "table": "ns_em_cases_f7cbqv"
+    },
+    "g4nqsv": {
+      "schema": "hive_metastore.probes",
+      "table": "potential_ns_em_g4nqsv"
+    },
+    "gnhgks": {
+      "schema": "hive_metastore.probes",
+      "table": "tat_fix_gnhgks"
+    }
+  }
+}

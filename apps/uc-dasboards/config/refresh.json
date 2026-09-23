@@ -1,0 +1,20 @@
+{
+  "timezone": "Asia/Kolkata",
+  "policies": {
+    "business_day_3x": {
+      "quartz_cron": "0 0 8,13,18 ? * MON-FRI *",
+      "overlap_policy": "skip",
+      "timeout_minutes": 30,
+      "retries": 2,
+      "keep_last_good_snapshot": true
+    }
+  },
+  "dashboard_policy": {
+    "live": "business_day_3x",
+    "relationship": "business_day_3x",
+    "aum": "business_day_3x",
+    "operations": "business_day_3x",
+    "lt_sales": "business_day_3x",
+    "portfolio": "business_day_3x"
+  }
+}
