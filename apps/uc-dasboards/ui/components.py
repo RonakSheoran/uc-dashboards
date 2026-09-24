@@ -37,7 +37,7 @@ _ROW_ORDER_KEY = "__uc_original_row_order__"
 
 
 def _show_all_date_ticks(figure: go.Figure, x_title: Optional[str] = None) -> None:
-    """Show every observed date/day on every Plotly date-based x-axis."""
+    """Keep every data point while showing a bounded axis that includes the latest date."""
     values = []
     seen = set()
     for trace in figure.data:
@@ -75,8 +75,18 @@ def _show_all_date_ticks(figure: go.Figure, x_title: Optional[str] = None) -> No
     if not (title_is_date or typed_dates or strings_are_dates):
         return
 
+    # Thousands of explicit tick labels can freeze the browser when a page has
+    # several charts. Keep every point in the trace, but limit printed labels
+    # and always include both the first and latest available dates.
+    max_tick_labels = 14
+    if len(values) > max_tick_labels:
+        indexes = np.linspace(0, len(values) - 1, max_tick_labels, dtype=int)
+        tick_values = [values[index] for index in dict.fromkeys(indexes)]
+    else:
+        tick_values = values
+
     tick_text = []
-    for value in values:
+    for value in tick_values:
         if isinstance(value, str):
             tick_text.append(value)
         elif isinstance(value, (date, datetime, pd.Timestamp, np.datetime64)):
@@ -86,7 +96,7 @@ def _show_all_date_ticks(figure: go.Figure, x_title: Optional[str] = None) -> No
 
     figure.update_xaxes(
         tickmode="array",
-        tickvals=values,
+        tickvals=tick_values,
         ticktext=tick_text,
         tickangle=-45,
         automargin=True,
