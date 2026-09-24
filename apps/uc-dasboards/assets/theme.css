@@ -39,6 +39,14 @@ button.export:hover, .dash-spreadsheet-container button.export:hover, .dash-spre
 .ui-filter--accent .ui-filter__label { margin:0; padding:3px 10px; color:#fff; background:var(--uc-primary); }
 .ui-filter__control { font-size:12px; }
 .ui-filter .Select-menu-outer { z-index:1001 !important; }
+.ui-date-range { flex:0 1 278px; max-width:278px; }
+.ui-date-range__control { display:block; width:100%; }
+.ui-date-range .DateRangePicker,
+.ui-date-range .DateRangePickerInput { width:100%; }
+.ui-date-range .DateRangePickerInput { display:flex; align-items:center; border:0; border-radius:0 0 4px 4px; }
+.ui-date-range .DateInput { flex:1; width:auto; }
+.ui-date-range .DateInput_input { height:33px; padding:5px 8px; color:var(--uc-text); font-size:12px; line-height:23px; }
+.ui-date-range .DateRangePickerInput_arrow { padding:0 4px; }
 .ui-tabs { padding:8px 16px; background:#fff; border-bottom:2px solid var(--uc-primary); }
 .ui-tabs__buttons { display:flex; gap:4px; flex-wrap:wrap; }
 .ui-tabs__mobile { display:none; width:100%; }
@@ -86,6 +94,7 @@ button.export:hover, .dash-spreadsheet-container button.export:hover, .dash-spre
   .ui-page-title { font-size:21px; }
   .ui-refresh-badge { width:100%; }
   .ui-filter { flex:1 1 100%; width:100%; max-width:none; min-width:0; }
+  .ui-date-range { flex-basis:100%; max-width:none; }
   .ui-tabs { position:relative; z-index:110; padding:9px 12px; }
   .ui-tabs__buttons { display:none; }
   .ui-tabs__mobile { display:block; }

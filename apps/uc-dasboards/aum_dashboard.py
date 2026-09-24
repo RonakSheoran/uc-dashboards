@@ -10,7 +10,8 @@ from ui import (
     NAVIGATION, theme_value, filter_ui, header_ui, section_title as ui_section_title,
     empty_state as ui_empty_state, matrix_table, table_ui, link_tab_bar,
     line_chart as ui_line_chart, multi_line_chart as ui_multi_line_chart,
-    clear_filters_button, full_export_controls, register_filter_reset, visual_scope,
+    clear_filters_button, date_range_filter_ui, full_export_controls,
+    register_date_range_reset, register_filter_reset, visual_scope,
 )
 from shared import (
     filter_frame as filt,
@@ -269,6 +270,49 @@ def add_month_label(df, date_col="check_month"):
         df["_msort"] = df[date_col]
     return df
 
+
+def _date_range_bounds(df, date_col, preferred_start=None):
+    """Return safe ISO bounds for a page-local Between slicer."""
+    if df is None or df.empty or date_col not in df.columns:
+        return None, None
+    dates = pd.to_datetime(df[date_col], errors="coerce").dropna()
+    if dates.empty:
+        return None, None
+    first = dates.min().normalize()
+    last = dates.max().normalize()
+    if preferred_start is not None:
+        preferred = pd.to_datetime(preferred_start, errors="coerce")
+        if not pd.isna(preferred):
+            first = min(last, max(first, preferred.normalize()))
+    return first.date().isoformat(), last.date().isoformat()
+
+
+def _date_slicer(df, component_id, date_col, preferred_start=None):
+    start_date, end_date = _date_range_bounds(df, date_col, preferred_start)
+    return date_range_filter_ui(
+        "Date Between",
+        component_id,
+        min_date=_date_range_bounds(df, date_col)[0],
+        max_date=end_date,
+        start_date=start_date,
+        end_date=end_date,
+    )
+
+
+def _filter_date_range(df, date_col, start_date, end_date):
+    """Filter rows inclusively without changing the source-defined columns."""
+    if df is None or df.empty or date_col not in df.columns:
+        return df
+    dates = pd.to_datetime(df[date_col], errors="coerce")
+    mask = dates.notna()
+    start = pd.to_datetime(start_date, errors="coerce") if start_date else pd.NaT
+    end = pd.to_datetime(end_date, errors="coerce") if end_date else pd.NaT
+    if not pd.isna(start):
+        mask &= dates >= start.normalize()
+    if not pd.isna(end):
+        mask &= dates < end.normalize() + pd.Timedelta(days=1)
+    return df.loc[mask].copy()
+
 # ---------------------------------------------------------------------------
 # Page Definitions
 # ---------------------------------------------------------------------------
@@ -302,6 +346,25 @@ _AUM_FILTER_GROUPS = {
 
 for _page_prefix, _filter_ids in _AUM_FILTER_GROUPS.items():
     register_filter_reset(f"{_page_prefix}-clear", _filter_ids)
+
+# Only pages with a genuine calendar axis get a Between slicer. Day-of-month
+# comparison pages intentionally remain unchanged because 1..31 is not a date.
+_AUM_DATE_FILTERS = {
+    "p2": ("par", "actual_date", None),
+    "p3": ("book", "check_month", None),
+    "p4": ("par", "actual_date", "2025-06-01"),
+    "p7": ("book", "check_month", None),
+    "p9": ("book", "check_month", None),
+    "p10": ("book", "check_month", None),
+    "p11": ("book", "check_month", None),
+}
+for _page_prefix, (_dataset, _date_col, _preferred_start) in _AUM_DATE_FILTERS.items():
+    register_date_range_reset(
+        f"{_page_prefix}-clear",
+        f"{_page_prefix}-date-range",
+        lambda dataset=_dataset, date_col=_date_col, preferred=_preferred_start:
+            _date_range_bounds(DF.get(dataset, pd.DataFrame()), date_col, preferred),
+    )
 
 # ---------------------------------------------------------------------------
 # Dash App
@@ -396,18 +459,21 @@ def page_uc_0par():
             make_dropdown("Lender", "p2-lender", uvals(df, "lender")),
             make_dropdown("Product", "p2-product", uvals(df, "Product")),
             make_dropdown("Channel Type", "p2-channel", uvals(df, "channel_type")),
+            _date_slicer(df, "p2-date-range", "actual_date"),
             clear_filters_button("p2-clear"),
         ], style={"display": "flex", "gap": "10px", "flexWrap": "wrap", "marginBottom": "16px"}),
         html.Div(id="p2-content"),
     ])
 
 @callback(Output("p2-content","children"),
-          [Input("p2-lender","value"),Input("p2-product","value"),Input("p2-channel","value")])
+          [Input("p2-lender","value"),Input("p2-product","value"),Input("p2-channel","value"),
+           Input("p2-date-range","start_date"),Input("p2-date-range","end_date")])
 @safe_callback
-def update_p2(lender, product, channel):
+def update_p2(lender, product, channel, start_date, end_date):
     df = DF.get("par", pd.DataFrame())
     if df.empty: return empty_state()
     d = filt(df, build_filters({"lender":lender,"Product":product,"channel_type":channel}))
+    d = _filter_date_range(d, "actual_date", start_date, end_date)
     if d.empty: return empty_state()
     d = add_month_label(d, "check_month")
     d = to_num(d, ["par_0_plus","par_0_plus_cr","par_30_plus","par_60_plus","par_90_plus","total_aum","par_15_plus"])
@@ -436,18 +502,21 @@ def page_uc_30_60():
             make_dropdown("Product", "p3-product", uvals(df, "Product")),
             make_dropdown("Channel Type", "p3-channel", uvals(df, "channel_type")),
             make_dropdown("Bucket Size", "p3-bucket", uvals(df, "bucket_size")),
+            _date_slicer(df, "p3-date-range", "check_month"),
             clear_filters_button("p3-clear"),
         ], style={"display": "flex", "gap": "10px", "flexWrap": "wrap", "marginBottom": "16px"}),
         html.Div(id="p3-content"),
     ])
 
 @callback(Output("p3-content","children"),
-          [Input("p3-lender","value"),Input("p3-product","value"),Input("p3-channel","value"),Input("p3-bucket","value")])
+          [Input("p3-lender","value"),Input("p3-product","value"),Input("p3-channel","value"),Input("p3-bucket","value"),
+           Input("p3-date-range","start_date"),Input("p3-date-range","end_date")])
 @safe_callback
-def update_p3(lender, product, channel, bucket):
+def update_p3(lender, product, channel, bucket, start_date, end_date):
     df = DF.get("book", pd.DataFrame())
     if df.empty: return empty_state()
     d = filt(df, build_filters({"lender":lender,"Product":product,"channel_type":channel,"bucket_size":bucket}))
+    d = _filter_date_range(d, "check_month", start_date, end_date)
     if d.empty: return empty_state()
     d = add_month_label(d)
     d = to_num(d, ["30_plus_par_1","60_plus_par_1","total_aum"])
@@ -486,18 +555,21 @@ def page_daily_trend():
             make_dropdown("Product", "p4-product", uvals(df, "Product")),
             make_dropdown("Channel Type", "p4-channel", uvals(df, "channel_type")),
             make_dropdown("Anchor Tag", "p4-atag", uvals(df, "anchor_tag")),
+            _date_slicer(df, "p4-date-range", "actual_date", "2025-06-01"),
             clear_filters_button("p4-clear"),
         ], style={"display": "flex", "gap": "10px", "flexWrap": "wrap", "marginBottom": "16px"}),
         html.Div(id="p4-content"),
     ])
 
 @callback(Output("p4-content","children"),
-          [Input("p4-lender","value"),Input("p4-product","value"),Input("p4-channel","value"),Input("p4-atag","value")])
+          [Input("p4-lender","value"),Input("p4-product","value"),Input("p4-channel","value"),Input("p4-atag","value"),
+           Input("p4-date-range","start_date"),Input("p4-date-range","end_date")])
 @safe_callback
-def update_p4(lender, product, channel, atag):
+def update_p4(lender, product, channel, atag, start_date, end_date):
     df = DF.get("par", pd.DataFrame())
     if df.empty: return empty_state()
     d = filt(df, build_filters({"lender":lender,"Product":product,"channel_type":channel,"anchor_tag":atag}))
+    d = _filter_date_range(d, "actual_date", start_date, end_date)
     if d.empty: return empty_state()
     d = to_num(d, ["par_0_plus_cr","par_15_plus_cr","par_30_plus_cr","par_60_plus_cr","par_90_plus_cr",
                    "total_aum","par_0_plus","par_15_plus","par_30_plus","par_60_plus","par_90_plus"])
@@ -662,18 +734,21 @@ def page_anchor_aum():
             make_dropdown("Bucket Size", "p7-bucket", uvals(df, "bucket_size")),
             make_dropdown("Anchor Type", "p7-atype", uvals(df, "Anchor_type")),
             make_dropdown("BD SPOC", "p7-bd", uvals(df, "lead_bd")),
+            _date_slicer(df, "p7-date-range", "check_month"),
             clear_filters_button("p7-clear"),
         ], style={"display": "flex", "gap": "10px", "flexWrap": "wrap", "marginBottom": "16px"}),
         html.Div(id="p7-content"),
     ])
 
 @callback(Output("p7-content","children"),
-          [Input("p7-lender","value"),Input("p7-anchor","value"),Input("p7-bucket","value"),Input("p7-atype","value"),Input("p7-bd","value")])
+          [Input("p7-lender","value"),Input("p7-anchor","value"),Input("p7-bucket","value"),Input("p7-atype","value"),Input("p7-bd","value"),
+           Input("p7-date-range","start_date"),Input("p7-date-range","end_date")])
 @safe_callback
-def update_p7(lender, anchor, bucket, atype, bd):
+def update_p7(lender, anchor, bucket, atype, bd, start_date, end_date):
     df = DF.get("book", pd.DataFrame())
     if df.empty: return empty_state()
     d = filt(df, build_filters({"lender":lender,"Anchor":anchor,"bucket_size":bucket,"Anchor_type":atype,"lead_bd":bd}))
+    d = _filter_date_range(d, "check_month", start_date, end_date)
     if d.empty: return empty_state()
     d = add_month_label(d)
     d = to_num(d, ["total_aum","Npa_1","write-off_1"])
@@ -745,18 +820,21 @@ def page_anchor_30_60():
             make_dropdown("Anchor", "p9-anchor", uvals(df, "Anchor")),
             make_dropdown("Bucket Size", "p9-bucket", uvals(df, "bucket_size")),
             make_dropdown("Anchor Type", "p9-atype", uvals(df, "Anchor_type")),
+            _date_slicer(df, "p9-date-range", "check_month"),
             clear_filters_button("p9-clear"),
         ], style={"display": "flex", "gap": "10px", "flexWrap": "wrap", "marginBottom": "16px"}),
         html.Div(id="p9-content"),
     ])
 
 @callback(Output("p9-content","children"),
-          [Input("p9-lender","value"),Input("p9-anchor","value"),Input("p9-bucket","value"),Input("p9-atype","value")])
+          [Input("p9-lender","value"),Input("p9-anchor","value"),Input("p9-bucket","value"),Input("p9-atype","value"),
+           Input("p9-date-range","start_date"),Input("p9-date-range","end_date")])
 @safe_callback
-def update_p9(lender, anchor, bucket, atype):
+def update_p9(lender, anchor, bucket, atype, start_date, end_date):
     df = DF.get("book", pd.DataFrame())
     if df.empty: return empty_state()
     d = filt(df, build_filters({"lender":lender,"Anchor":anchor,"bucket_size":bucket,"Anchor_type":atype}))
+    d = _filter_date_range(d, "check_month", start_date, end_date)
     if d.empty: return empty_state()
     d = add_month_label(d)
     d = to_num(d, ["30_plus_par_1","60_plus_par_1","Npa_1","total_aum"])
@@ -793,18 +871,21 @@ def page_anchor_disb():
             make_dropdown("Bucket Size", "p10-bucket", uvals(df, "bucket_size")),
             make_dropdown("Anchor Type", "p10-atype", uvals(df, "Anchor_type")),
             make_dropdown("BD SPOC", "p10-bd", uvals(df, "lead_bd")),
+            _date_slicer(df, "p10-date-range", "check_month"),
             clear_filters_button("p10-clear"),
         ], style={"display": "flex", "gap": "10px", "flexWrap": "wrap", "marginBottom": "16px"}),
         html.Div(id="p10-content"),
     ])
 
 @callback(Output("p10-content","children"),
-          [Input("p10-lender","value"),Input("p10-anchor","value"),Input("p10-bucket","value"),Input("p10-atype","value"),Input("p10-bd","value")])
+          [Input("p10-lender","value"),Input("p10-anchor","value"),Input("p10-bucket","value"),Input("p10-atype","value"),Input("p10-bd","value"),
+           Input("p10-date-range","start_date"),Input("p10-date-range","end_date")])
 @safe_callback
-def update_p10(lender, anchor, bucket, atype, bd):
+def update_p10(lender, anchor, bucket, atype, bd, start_date, end_date):
     df = DF.get("book", pd.DataFrame())
     if df.empty: return empty_state()
     d = filt(df, build_filters({"lender":lender,"Anchor":anchor,"bucket_size":bucket,"Anchor_type":atype,"lead_bd":bd}))
+    d = _filter_date_range(d, "check_month", start_date, end_date)
     if d.empty: return empty_state()
     d = add_month_label(d)
     d = to_num(d, ["Disbursal_amt","count_credit_line_id_disb"])
@@ -835,18 +916,21 @@ def page_brand_anchor():
             make_dropdown("Bucket Size", "p11-bucket", uvals(df, "bucket_size")),
             make_dropdown("Anchor Type", "p11-atype", uvals(df, "Anchor_type")),
             make_dropdown("Anchor Category", "p11-cat", uvals(df, "anchor_category")),
+            _date_slicer(df, "p11-date-range", "check_month"),
             clear_filters_button("p11-clear"),
         ], style={"display": "flex", "gap": "10px", "flexWrap": "wrap", "marginBottom": "16px"}),
         html.Div(id="p11-content"),
     ])
 
 @callback(Output("p11-content","children"),
-          [Input("p11-lender","value"),Input("p11-anchor","value"),Input("p11-bucket","value"),Input("p11-atype","value"),Input("p11-cat","value")])
+          [Input("p11-lender","value"),Input("p11-anchor","value"),Input("p11-bucket","value"),Input("p11-atype","value"),Input("p11-cat","value"),
+           Input("p11-date-range","start_date"),Input("p11-date-range","end_date")])
 @safe_callback
-def update_p11(lender, anchor, bucket, atype, cat):
+def update_p11(lender, anchor, bucket, atype, cat, start_date, end_date):
     df = DF.get("book", pd.DataFrame())
     if df.empty: return empty_state()
     d = filt(df, build_filters({"lender":lender,"Anchors":anchor,"bucket_size":bucket,"Anchor_type":atype,"anchor_category":cat}))
+    d = _filter_date_range(d, "check_month", start_date, end_date)
     if d.empty: return empty_state()
     d = add_month_label(d)
     d = to_num(d, ["total_aum","Npa_1","write-off_1","Disbursal_amt"])
