@@ -11,6 +11,7 @@ import operational_metrics
 import lt_sales
 import portfolio_monitoring
 import invoice_command
+import decisioning_command
 from shared import track_tab_click
 from ui import APP_CONFIG, NAVIGATION, theme_value, theme_css_variables
 
@@ -28,6 +29,7 @@ PAGE_MODULES = {
     "lt_sales": lt_sales,
     "portfolio": portfolio_monitoring,
     "invoice_command": invoice_command,
+    "decisioning_command": decisioning_command,
 }
 DEFAULT_TABS = {
     page["id"]: (

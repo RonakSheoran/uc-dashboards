@@ -15,6 +15,7 @@
     "aum": "business_day_3x",
     "operations": "business_day_3x",
     "lt_sales": "business_day_3x",
-    "portfolio": "business_day_3x"
+    "portfolio": "business_day_3x",
+    "decisioning_command": "business_day_3x"
   }
 }
