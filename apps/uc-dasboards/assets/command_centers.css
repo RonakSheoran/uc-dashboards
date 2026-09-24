@@ -1,3 +1,6 @@
 .command-kpis {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:16px 0;}
 .command-kpis .ui-kpi__value {font-size:24px;overflow-wrap:anywhere;}
+.decisioning-month-filter {padding:0 16px 16px;}
+.decisioning-filters {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding:0 16px 16px;}
 @media(max-width:768px){.command-kpis{grid-template-columns:1fr;}}
+@media(max-width:768px){.decisioning-filters{grid-template-columns:1fr;}}

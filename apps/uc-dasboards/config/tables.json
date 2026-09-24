@@ -147,6 +147,10 @@
     "gnhgks": {
       "schema": "hive_metastore.probes",
       "table": "tat_fix_gnhgks"
+    },
+    "hbcwzx": {
+      "schema": "hive_metastore.probes",
+      "table": "Application_under_60_hbcwzx"
     }
   }
 }

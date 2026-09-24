@@ -55,6 +55,14 @@
       "module": "invoice_command",
       "serial": 7,
       "order": 70
+    },
+    {
+      "id": "decisioning_command",
+      "label": "60 Min Decisioning",
+      "icon": "decisioning_command.svg",
+      "module": "decisioning_command",
+      "serial": 8,
+      "order": 80
     }
   ],
   "subpages": {
@@ -345,6 +353,20 @@
       }
     ],
     "invoice_command": [
+      {
+        "id": "snapshot",
+        "label": "Eligibility Snapshot",
+        "serial": 1,
+        "order": 10
+      },
+      {
+        "id": "waterfall",
+        "label": "Waterfall Funnel",
+        "serial": 2,
+        "order": 20
+      }
+    ],
+    "decisioning_command": [
       {
         "id": "snapshot",
         "label": "Eligibility Snapshot",

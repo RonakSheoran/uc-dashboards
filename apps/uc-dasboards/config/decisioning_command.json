@@ -1,0 +1,9 @@
+{
+  "cache_seconds": 900,
+  "days": 7,
+  "table": "hive_metastore.probes.Application_under_60_hbcwzx",
+  "title": "60 Min Decisioning Command Center",
+  "threshold_minutes": 60,
+  "proprietorship_value": "PROPRIETORSHIP",
+  "target_percent": 90
+}
