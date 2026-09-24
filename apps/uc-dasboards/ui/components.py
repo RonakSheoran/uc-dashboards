@@ -7,7 +7,6 @@ visually consistent and makes JSON-driven pages straightforward later.
 from __future__ import annotations
 
 import base64
-from datetime import date, datetime
 from typing import Any, Iterable, Mapping, Optional, Sequence
 
 import numpy as np
@@ -34,73 +33,6 @@ GRID = theme_value("colors.grid", "#F0F0F0")
 FONT = theme_value("typography.family", "DM Sans, sans-serif")
 CHART_COLORS = theme_value("charts.series", [PRIMARY, "#8B5CF6", "#F59E0B", "#06B6D4"])
 _ROW_ORDER_KEY = "__uc_original_row_order__"
-
-
-def _show_all_date_ticks(figure: go.Figure, x_title: Optional[str] = None) -> None:
-    """Keep every data point while showing a bounded axis that includes the latest date."""
-    values = []
-    seen = set()
-    for trace in figure.data:
-        trace_values = getattr(trace, "x", None)
-        if trace_values is None:
-            continue
-        for value in trace_values:
-            try:
-                if pd.isna(value):
-                    continue
-            except (TypeError, ValueError):
-                pass
-            marker = (type(value).__name__, str(value))
-            if marker not in seen:
-                seen.add(marker)
-                values.append(value)
-
-    if not values:
-        return
-
-    title = str(x_title or "").casefold()
-    title_is_date = any(token in title for token in ("date", "day", "month"))
-    typed_dates = any(
-        isinstance(value, (date, datetime, pd.Timestamp, np.datetime64))
-        for value in values
-    )
-    string_values = [value for value in values if isinstance(value, str)]
-    strings_are_dates = False
-    if string_values and len(string_values) == len(values):
-        date_candidates = [value for value in string_values if "-" in value or "/" in value]
-        if date_candidates:
-            parsed = pd.to_datetime(pd.Series(date_candidates), errors="coerce")
-            strings_are_dates = parsed.notna().mean() >= 0.8
-
-    if not (title_is_date or typed_dates or strings_are_dates):
-        return
-
-    # Thousands of explicit tick labels can freeze the browser when a page has
-    # several charts. Keep every point in the trace, but limit printed labels
-    # and always include both the first and latest available dates.
-    max_tick_labels = 14
-    if len(values) > max_tick_labels:
-        indexes = np.linspace(0, len(values) - 1, max_tick_labels, dtype=int)
-        tick_values = [values[index] for index in dict.fromkeys(indexes)]
-    else:
-        tick_values = values
-
-    tick_text = []
-    for value in tick_values:
-        if isinstance(value, str):
-            tick_text.append(value)
-        elif isinstance(value, (date, datetime, pd.Timestamp, np.datetime64)):
-            tick_text.append(pd.Timestamp(value).strftime("%Y-%m-%d"))
-        else:
-            tick_text.append(str(value))
-
-    figure.update_xaxes(
-        tickmode="array",
-        tickvals=tick_values,
-        ticktext=tick_text,
-        tickangle=-45,
-        automargin=True,
-    )
 
 
 def _is_blank_sort_value(value: Any) -> bool:
@@ -256,6 +188,34 @@ def filter_ui(
             ),
         ],
         className=class_name,
+    )
+
+
+def date_range_filter_ui(
+    label: str,
+    component_id: Any,
+    *,
+    min_date: Any = None,
+    max_date: Any = None,
+    start_date: Any = None,
+    end_date: Any = None,
+):
+    """Power BI-style Between slicer for a page's real calendar field."""
+    return html.Div(
+        [
+            html.Label(label, className="ui-filter__label"),
+            dcc.DatePickerRange(
+                id=component_id,
+                min_date_allowed=min_date,
+                max_date_allowed=max_date,
+                start_date=start_date,
+                end_date=end_date,
+                display_format="YYYY-MM-DD",
+                minimum_nights=0,
+                className="ui-date-range__control",
+            ),
+        ],
+        className="ui-filter ui-filter--accent ui-date-range",
     )
 
 
@@ -592,7 +552,6 @@ def apply_figure_theme(
     )
     figure.update_xaxes(gridcolor=GRID, zeroline=False, title_text=x_title)
     figure.update_yaxes(gridcolor=GRID, zeroline=False, title_text=y_title, ticksuffix="%" if percent else "")
-    _show_all_date_ticks(figure, x_title=x_title)
     return figure
 
 
