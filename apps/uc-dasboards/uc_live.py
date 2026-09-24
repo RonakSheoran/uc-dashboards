@@ -18,9 +18,9 @@ _cache = {}
 _cache_ttl = 1800  # 30 minutes
 
 
-def fetch_data():
+def fetch_data(*, force=False):
     now = time.time()
-    if "data" in _cache and (now - _cache["ts"]) < _cache_ttl:
+    if not force and "data" in _cache and (now - _cache["ts"]) < _cache_ttl:
         return _cache["data"]
 
     try:
@@ -38,6 +38,8 @@ def fetch_data():
         )
     except Exception as exc:
         print(f"ERROR: Failed to load live-status data: {exc}", file=sys.stderr)
+        if "data" in _cache:
+            return _cache["data"]
         return None, None, None, None, None
 
     data = (
@@ -50,6 +52,16 @@ def fetch_data():
     _cache["data"] = data
     _cache["ts"] = now
     return data
+
+
+def refresh_data():
+    """Refresh the complete Live Status snapshot while retaining the last good data."""
+    data = fetch_data(force=True)
+    return data[0] is not None
+
+
+# Deployment/startup refresh. Scheduled refreshes use the same public hook.
+refresh_data()
 
 
 

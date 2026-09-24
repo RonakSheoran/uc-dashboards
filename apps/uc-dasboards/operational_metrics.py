@@ -1,6 +1,7 @@
 """Operational Metrics dashboard module for the merged uC Dashboards app."""
 import os
 import sys
+import threading
 from functools import partial
 from typing import Dict, List, Optional
 
@@ -44,6 +45,7 @@ SERIES_COLORS = ["#5B9BD5", "#ED7D31", "#7030A0", "#FF0000"]
 SERIES_NAMES = ["M0", "M-1", "M-2", "M-3"]
 
 _query_cache = QueryCache(CACHE_TTL_SEC)
+_refresh_lock = threading.Lock()
 to_numeric = partial(shared_to_numeric, copy=True)
 
 
@@ -553,6 +555,35 @@ def _build_filter_options() -> Dict[str, List[str]]:
 # Computed once at import — reused on every layout() call with zero SQL cost.
 _FILTER_OPTS: Dict[str, List[str]] = _build_filter_options()
 _REFRESH_TEXT: str = latest_refresh_text()
+
+
+def refresh_data():
+    """Atomically replace all Operational Metrics tables and slicer options."""
+    global _query_cache, _REFRESH_TEXT
+    with _refresh_lock:
+        previous_cache = _query_cache
+        candidate = QueryCache(CACHE_TTL_SEC)
+        try:
+            for table_name in _ALL_TABLES:
+                frame = run_query(
+                    f"SELECT * FROM {SCHEMA}.{table_name}",
+                    context=f"operations:{table_name}",
+                    raise_on_error=True,
+                )
+                candidate.put(table_name, frame)
+            _query_cache = candidate
+            refreshed_options = _build_filter_options()
+            refreshed_text = latest_refresh_text()
+        except Exception:
+            _query_cache = previous_cache
+            raise
+
+        # Existing slicer definitions retain references to these lists, so
+        # update each list in place instead of replacing the dictionary.
+        for key in set(_FILTER_OPTS) | set(refreshed_options):
+            _FILTER_OPTS.setdefault(key, [])[:]= refreshed_options.get(key, [])
+        _REFRESH_TEXT = refreshed_text
+        return True
 
 
 # ---------------------------------------------------------------------------

@@ -144,15 +144,38 @@ def validate() -> None:
         raise ValueError(f"visual comment source mismatch: {mismatched_comments}")
 
     policies = refresh.get("policies", {})
+    app_policy = refresh.get("app_policy")
+    if app_policy not in policies:
+        raise ValueError(f"refresh.app_policy: unknown policy {app_policy}")
     for dashboard_id, policy_id in refresh.get("dashboard_policy", {}).items():
         if dashboard_id not in dashboard_ids:
             raise ValueError(f"refresh.dashboard_policy: unknown dashboard {dashboard_id}")
         if policy_id not in policies:
             raise ValueError(f"refresh.dashboard_policy.{dashboard_id}: unknown policy {policy_id}")
     for policy_id, policy in policies.items():
-        expression = policy.get("quartz_cron", "")
-        if len(expression.split()) != 7:
-            raise ValueError(f"refresh.policies.{policy_id}.quartz_cron must have 7 Quartz fields")
+        expression = policy.get("quartz_cron")
+        times = policy.get("times")
+        if expression is not None:
+            if len(expression.split()) != 7:
+                raise ValueError(f"refresh.policies.{policy_id}.quartz_cron must have 7 Quartz fields")
+        elif times is not None:
+            if not isinstance(times, list) or not times:
+                raise ValueError(f"refresh.policies.{policy_id}.times must be a non-empty list")
+            invalid_times = []
+            for value in times:
+                match = re.fullmatch(r"(\d{2}):(\d{2})", value) if isinstance(value, str) else None
+                if not match or int(match.group(1)) > 23 or int(match.group(2)) > 59:
+                    invalid_times.append(value)
+            if invalid_times:
+                raise ValueError(
+                    f"refresh.policies.{policy_id}.times contains invalid HH:MM values: {invalid_times}"
+                )
+            if len(times) != len(set(times)):
+                raise ValueError(f"refresh.policies.{policy_id}.times contains duplicates")
+        else:
+            raise ValueError(
+                f"refresh.policies.{policy_id} must define quartz_cron or times"
+            )
 
     required_theme_sections = {"colors", "typography", "cards", "charts", "tables", "buttons"}
     missing_sections = sorted(required_theme_sections - set(theme))

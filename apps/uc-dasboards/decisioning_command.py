@@ -20,10 +20,10 @@ _CACHE = None
 _LOCK = threading.Lock()
 
 
-def load():
+def load(*, force=False):
     global _CACHE
     with _LOCK:
-        if _CACHE and time.monotonic() - _CACHE[0] < CONFIG["cache_seconds"]:
+        if not force and _CACHE and time.monotonic() - _CACHE[0] < CONFIG["cache_seconds"]:
             return _CACHE[1:]
         previous = _CACHE
         try:
@@ -52,6 +52,16 @@ def load():
             if previous:
                 return previous[1], previous[2], f"Refresh failed; showing previous snapshot: {exc}"
             return pd.DataFrame(), "Unavailable", f"Data load error: {exc}"
+
+
+def refresh_data():
+    """Public whole-page refresh hook used by the app scheduler."""
+    _, _, error = load(force=True)
+    return not bool(error)
+
+
+# Deployment/startup refresh. Scheduled refreshes use the same public hook.
+refresh_data()
 
 
 def _options(frame, column):

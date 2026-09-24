@@ -88,7 +88,7 @@ def _add_power_bi_model_columns(frame: pd.DataFrame) -> pd.DataFrame:
     return result
 
 
-def _load_data() -> None:
+def _load_data() -> bool:
     """Load source-defined columns once; all tab changes aggregate the local snapshot."""
     global LOADED_AT
     queries = {
@@ -102,15 +102,23 @@ def _load_data() -> None:
         "potential": f"SELECT {', '.join(POTENTIAL_COLUMNS)} FROM {TABLES['potential']}",
         "enhancement": f"SELECT {', '.join(ENHANCEMENT_COLUMNS)} FROM {TABLES['enhancement']}",
     }
+    all_ok = True
     for name, query in queries.items():
         try:
             loaded = run_query(query, context=f"portfolio:{name}", raise_on_error=True)
             DATA[name] = _add_power_bi_model_columns(loaded) if name == "portfolio" else loaded
             LOAD_ERRORS.pop(name, None)
         except Exception as exc:
+            all_ok = False
             LOAD_ERRORS[name] = str(exc)
             print(f"[portfolio] {name} load failed: {exc}", file=sys.stderr)
     LOADED_AT = format_timestamp(pd.Timestamp.now(tz="Asia/Kolkata"))
+    return all_ok
+
+
+def refresh_data():
+    """Public whole-page refresh hook used by the app scheduler."""
+    return _load_data()
 
 
 _load_data()

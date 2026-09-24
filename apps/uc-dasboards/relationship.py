@@ -73,9 +73,16 @@ def refresh():
         DATA = load_data()
         DATA_ERR = ""
         DATA_AT = format_timestamp(datetime.now())
+        return True
     except Exception as e:
         DATA_ERR = str(e)
         print(f"[ERROR] {e}", file=sys.stderr)
+        return False
+
+
+def refresh_data():
+    """Public whole-page refresh hook used by the app scheduler."""
+    return refresh()
 
 
 refresh()

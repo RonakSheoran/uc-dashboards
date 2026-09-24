@@ -111,15 +111,18 @@ LEADS_LOADED_AT = "Source timestamp unavailable"
 def load_leads() -> None:
     global LEADS, LEADS_ERROR, LEADS_LOADED_AT
     try:
-        LEADS = run_query(
+        loaded = run_query(
             f"SELECT {', '.join(LEAD_COLUMNS)} FROM {LEAD_TABLE}",
             context="lt-sales:fvvs4w", raise_on_error=True,
         )
+        LEADS = loaded
         LEADS_ERROR = ""
         LEADS_LOADED_AT = format_timestamp(pd.Timestamp.now(tz="Asia/Kolkata"))
+        return True
     except Exception as exc:
         LEADS_ERROR = str(exc)
         print(f"[lt_sales] lead load failed: {exc}", file=sys.stderr)
+        return False
 
 
 def load_daily() -> None:
@@ -132,11 +135,21 @@ def load_daily() -> None:
         "breach": f"SELECT officer, Anchor, lead_id, lead_name, lead_bd, followup_breach, lead_upload_date, nextActionDate, latest_updated_at FROM {SCHEMA}.followup_breach_report_xo5ozz",
     }
     try:
-        DAILY = run_queries(queries, context="lt-sales", raise_on_error=True)
+        loaded = run_queries(queries, context="lt-sales", raise_on_error=True)
+        DAILY = loaded
         DAILY_ERROR = ""
+        return True
     except Exception as exc:
         DAILY_ERROR = str(exc)
         print(f"[lt_sales] daily load failed: {exc}", file=sys.stderr)
+        return False
+
+
+def refresh_data():
+    """Refresh both LT Sales snapshots; each retains its last good data on failure."""
+    leads_ok = load_leads()
+    daily_ok = load_daily()
+    return leads_ok and daily_ok
 
 
 load_leads()

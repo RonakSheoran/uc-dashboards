@@ -16,11 +16,11 @@ _LOCK = threading.Lock()
 INVOICE_COLUMNS = ["id", "latest_invoice_timestamp", "lender", "risky_customer", "invoice_amount_tag", "invoice_tat", "refresh_time"]
 
 
-def load(page):
+def load(page, *, force=False):
     cfg = CONFIG[page]
     with _LOCK:
         previous = _CACHE.get(page)
-        if previous and time.monotonic() - previous[0] < CONFIG["cache_seconds"]:
+        if not force and previous and time.monotonic() - previous[0] < CONFIG["cache_seconds"]:
             return previous[1:]
         try:
             columns = list(INVOICE_COLUMNS)
@@ -49,6 +49,16 @@ def load(page):
             if previous:
                 return previous[1], previous[2], f"Refresh failed; showing previous snapshot: {exc}"
             return pd.DataFrame(), "Unavailable", f"Data load error: {exc}"
+
+
+def refresh_data():
+    """Refresh every command-centre page configured in this renderer."""
+    success = True
+    for page, cfg in CONFIG.items():
+        if isinstance(cfg, dict) and cfg.get("table"):
+            _, _, error = load(page, force=True)
+            success = success and not bool(error)
+    return success
 
 
 def value(number, suffix=""):
