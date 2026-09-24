@@ -12,8 +12,8 @@ import lt_sales
 import portfolio_monitoring
 import invoice_command
 import decisioning_command
-from shared import track_tab_click
-from ui import APP_CONFIG, NAVIGATION, theme_value, theme_css_variables
+from shared import start_global_refresh_scheduler, track_tab_click
+from ui import APP_CONFIG, NAVIGATION, REFRESH_CONFIG, theme_value, theme_css_variables
 
 # ---------------------------------------------------------------------------
 # Config
@@ -190,6 +190,24 @@ def apply_collapse(is_open):
 def render_section(active):
     module = PAGE_MODULES.get(active)
     return module.layout() if module else html.Div("Select a page from the sidebar.")
+
+
+# All modules perform an initial data load during import (deployment). This one
+# process-wide scheduler refreshes every module again at the configured IST
+# times, independently of which pages users have open.
+start_global_refresh_scheduler(
+    REFRESH_CONFIG,
+    {
+        "live": uc_live.refresh_data,
+        "aum": aum_dashboard.refresh_data,
+        "relationship": relationship.refresh_data,
+        "operations": operational_metrics.refresh_data,
+        "lt_sales": lt_sales.refresh_data,
+        "portfolio": portfolio_monitoring.refresh_data,
+        "invoice_command": invoice_command.refresh_data,
+        "decisioning_command": decisioning_command.refresh_data,
+    },
+)
 
 
 if __name__ == "__main__":

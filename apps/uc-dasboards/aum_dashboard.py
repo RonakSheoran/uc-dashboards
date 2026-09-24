@@ -1,5 +1,5 @@
 """AUM Dashboard — Databricks App (all 16 Power BI pages)."""
-import os, sys, warnings
+import os, sys, threading, warnings
 warnings.filterwarnings("ignore")
 import pandas as pd
 import numpy as np
@@ -184,6 +184,28 @@ def _latest_source_update() -> str:
 
 
 DATA_UPDATED_TEXT = _latest_source_update()
+_REFRESH_LOCK = threading.Lock()
+
+
+def refresh_data():
+    """Atomically replace every AUM dataset after a complete successful reload."""
+    global DF, DATA_UPDATED_TEXT
+    with _REFRESH_LOCK:
+        refreshed = {}
+        for name, query in _AUM_QUERIES.items():
+            frame = run_query(query, context=f"aum:{name}", raise_on_error=True)
+            for column in frame.columns:
+                try:
+                    frame[column] = pd.to_numeric(frame[column], errors="ignore")
+                except Exception:
+                    pass
+            refreshed[name] = frame
+        # l30 is intentionally local/empty and has no source query.
+        if "l30" in DF:
+            refreshed["l30"] = DF["l30"]
+        DF = refreshed
+        DATA_UPDATED_TEXT = _latest_source_update()
+        return True
 
 # ---------------------------------------------------------------------------
 # Style Tokens (matching PBI palette)

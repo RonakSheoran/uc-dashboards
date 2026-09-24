@@ -105,6 +105,10 @@ class QueryCache:
             self._items[key] = {"timestamp": now, "frame": frame}
         return frame.copy() if copy else frame
 
+    def put(self, key: str, frame: pd.DataFrame) -> None:
+        """Store a preloaded frame, used for atomic whole-app refreshes."""
+        self._items[key] = {"timestamp": time.time(), "frame": frame}
+
     def clear(self, key: str | None = None) -> None:
         if key is None:
             self._items.clear()

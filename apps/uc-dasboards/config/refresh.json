@@ -1,8 +1,9 @@
 {
   "timezone": "Asia/Kolkata",
+  "app_policy": "daily_3x",
   "policies": {
-    "business_day_3x": {
-      "quartz_cron": "0 0 8,13,18 ? * MON-FRI *",
+    "daily_3x": {
+      "times": ["09:00", "15:30", "19:30"],
       "overlap_policy": "skip",
       "timeout_minutes": 30,
       "retries": 2,
@@ -10,12 +11,13 @@
     }
   },
   "dashboard_policy": {
-    "live": "business_day_3x",
-    "relationship": "business_day_3x",
-    "aum": "business_day_3x",
-    "operations": "business_day_3x",
-    "lt_sales": "business_day_3x",
-    "portfolio": "business_day_3x",
-    "decisioning_command": "business_day_3x"
+    "live": "daily_3x",
+    "relationship": "daily_3x",
+    "aum": "daily_3x",
+    "operations": "daily_3x",
+    "lt_sales": "daily_3x",
+    "portfolio": "daily_3x",
+    "invoice_command": "daily_3x",
+    "decisioning_command": "daily_3x"
   }
 }
